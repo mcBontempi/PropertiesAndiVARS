@@ -11,30 +11,42 @@
 
 @interface DDTViewController ()
 
-@property (nonatomic, strong) NSString *privateOverloadedString;
+// the only time we need to use a category is when we need to do
+// custom setter or getter, we could just use an IVAR and create our
+// own setter AND getter, this way though the compiler creates
+// a default getter and setter.
+@property (nonatomic, strong) NSString *overloadedString;
 
 @end
 
 @implementation DDTViewController {
     
     // Same as using a strong property, implicit __strong qualification
-    NSString *_iVarString;
+    NSString *_privateString;
     
     // Same as using a weak outlet property
     __weak IBOutlet UIButton *_button;
     
-    __weak id<DDTViewControllerDelegate> delegate;
+    // assume this has been injected into the class
+    __weak id<DDTViewControllerDelegate> _delegate;
 }
 
-// Avoid us accidentally calling _privateOverloadedString, NOTE two underscores
-@synthesize privateOverloadedString = __privateOverloadedString;
+// Avoid us accidentally using _overloadedString when we should be using self.overloadedString
+// NOTE two underscores
+@synthesize overloadedString = __overloadedString;
 
-- (void)setPrivateOverloadedString:(NSString *)privateOverloadedString
+#pragma mark - Overloads
+
+- (NSString *)overloadedString
 {
-    __privateOverloadedString = privateOverloadedString;
-
-    // do something here as usual in an overloaded setter
+    if (__overloadedString == nil) {
+        __overloadedString = @"Overloaded value";
+    }
+    
+    return __overloadedString;
 }
+
+#pragma mark - View Lifecycle
 
 - (void)viewDidLoad
 {
@@ -42,9 +54,13 @@
     
     self.publicString = @"Daren";
     
-    _iVarString = @"David";
+    _privateString = @"David";
+
+    _button.titleLabel.text = @"New Button Label";
     
-    self.privateOverloadedString = @"Taylor";
+    NSLog(@"%@", self.overloadedString);
+    
+    [_delegate delegateMethod];
 }
 
 @end
