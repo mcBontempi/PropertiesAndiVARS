@@ -52,14 +52,19 @@
 {
     [super viewDidLoad];
     
+    // publicly visible
     self.publicString = @"Daren";
     
+    // private
     _privateString = @"David";
 
+    // private outlet
     _button.titleLabel.text = @"New Button Label";
     
+    // private overload
     NSLog(@"%@", self.overloadedString);
     
+    // private __weak delegate
     [_delegate delegateMethod];
 }
 
